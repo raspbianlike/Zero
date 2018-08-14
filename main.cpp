@@ -18,7 +18,7 @@ int main() {
     z.ReadBuffer(samplePointer, &tempPointer, sizeof(tempPointer));
     z.ReadBuffer(tempPointer, &readString, sizeof(readString));
 
-    cout << "Before-write (0x" << hex << samplePointer << ") = " << readString << endl;
+    printf("Before-write (%#p) = %s\n", samplePointer, readString);
 
     /* --------------------------------------------------------- */
 
@@ -29,9 +29,11 @@ int main() {
     z.WriteBuffer(samplePointer, &tempPointer, sizeof(tempPointer));
 
 
-    cout << "After-write  (0x" << samplePointer << ") = " << sampleString << endl;
+    printf("After-write  (%#p) = %s\n", samplePointer, sampleString.c_str());
 
     /* --------------------------------------------------------- */
+
+    printf("Finished!\n");
 
     return EXIT_SUCCESS;
 }

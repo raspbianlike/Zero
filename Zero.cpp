@@ -7,33 +7,20 @@ Zero::~Zero() {
 }
 
 void Zero::Process(const char *processName) {
-    DIR *maps = opendir("/proc/");
 
-    if (!maps) {
-        std::cout << "Failed to read \"/proc/\" directory! Exit..." << std::endl;
-        std::exit(EXIT_FAILURE);
-    }
-
-    struct dirent *dir;
-
-    while (dir = readdir(maps), dir != nullptr) {
-
-        if (dir->d_type != DT_DIR)
+    for (auto &dir : std::filesystem::directory_iterator("/proc/")) {
+        if (!dir.is_directory() || !std::isdigit(dir.path().filename().c_str()[0]))
             continue;
 
-        std::string sPid = dir->d_name;
-        std::ifstream s("/proc/" + sPid + "/comm");
         std::string comm;
-        getline(s, comm);
+        getline(std::ifstream(dir.path() / "comm"), comm);
 
-        if (!strcmp(comm.c_str(), processName)) {
-            pid_t tPid = atoi(sPid.c_str());
-            std::cout << "Found target process! PID: " << tPid << std::endl;
-            this->pid = tPid;
+        if (comm == processName) {
+            printf("Found target process! PID: %s\n", dir.path().filename().c_str());
+            this->pid = atoi(dir.path().filename().c_str());
             return;
         }
-
     }
-    std::cout << "Failed to find target process! Exit..." << std::endl;
+    printf("Failed to find target process... Exit...\n");
     std::exit(EXIT_FAILURE);
 }
