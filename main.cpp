@@ -2,24 +2,6 @@
 
 using namespace std;
 
-/*int main() {
-    Zero z;
-
-    string sampleString("This is a string!");
-    string *samplePointer = &sampleString;
-
-    z.Process("DummyMem");
-
-    uintptr_t sss = 0x7ffe6eb56170;
-
-    uintptr_t tmp;
-    char rr[128];
-
-    z.ReadBuffer(sss, &tmp, sizeof(tmp));
-    z.ReadBuffer(tmp, &rr, sizeof(rr));
-    cout << rr;
-}*/
-
 int main() {
     Zero z;
 
