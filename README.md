@@ -1,2 +1,2 @@
 # Zero
-Zero - A small and painless "process_vm" wrapper
+Zero - A small and painless Linux memory hacking wrapper
