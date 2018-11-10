@@ -123,33 +123,34 @@ public:
     }
 
     uintptr_t FindPattern(const char *pattern, const char *mask, const char *module, const char *name) {
-        char buffer[0x500];
         mapInfo current = this->FindModuleInfo(module);
-
         size_t readLength = strlen(mask);
-        size_t chunkSize = sizeof(buffer);
+
+        char buffer[0x500 + readLength];
+        size_t chunkSize = sizeof(buffer) - readLength;
         size_t chunkCount = 0;
         size_t totalSize = current.size;
 
         while (totalSize) {
             size_t readSize = (totalSize < chunkSize) ? totalSize : chunkSize;
-            uintptr_t readAdress = current.start + (chunkCount * chunkSize);
-            bzero(buffer, chunkSize);
+            uintptr_t readAddress = current.start + (chunkCount * chunkSize);
 
-            if (this->ReadBuffer(readAdress, buffer, readSize)) {
-                for (size_t it = 0; it < readSize; it++) {
+            memcpy(buffer, buffer + 0x500, readLength); // thanks to Heep042
+            if (this->ReadBuffer(readAddress, buffer + readLength, chunkSize)) {
+                for (size_t it = 0; it < readSize + readLength; it++) {
                     size_t matchCount = 0;
                     while (buffer[it + matchCount] == pattern[matchCount] || mask[matchCount] != 'x') {
                         matchCount++;
-                        if (matchCount == readLength)
-                            return readAdress + it;
+                        if (matchCount == readLength) {
+                            return readAddress + it - readLength;
+                        }
                     }
                 }
             }
             chunkCount++;
             totalSize -= readSize;
         }
-        printf("Unable to find pattern! %s\n", name);
+        printf("Unable to find pattern %s!\n", name);
         return NULL;
     }
 
